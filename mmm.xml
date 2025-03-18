@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+  <block type="trade" id="trade_start" x="0" y="0">
+    <field name="MARKET_LIST">volidx</field>
+    <field name="SUBMARKET_LIST">random_index</field>
+    <field name="SYMBOL_LIST">R_75</field>
+    <field name="TRADETYPE_LIST">multiplier</field>
+    <field name="MULTIPLIER_VALUE">10</field>
+    <field name="STAKE">1</field>
+    <statement name="PURCHASE_CONDITIONS">
+      <block type="always_purchase" id="always_purchase"></block>
+    </statement>
+    <statement name="DURING_TRADE">
+      <block type="variables_set" id="set_max_profit_init">
+        <field name="VAR">MaxProfit</field>
+        <value name="VALUE">
+          <block type="math_number" id="max_profit_init_num">
+            <field name="NUM">0</field>
+          </block>
+        </value>
+        <next>
+          <block type="read_details" id="read_current_profit">
+            <field name="DETAIL_INDEX">4</field>
+            <next>
+              <block type="controls_if" id="update_max_profit">
+                <value name="IF0">
+                  <block type="logic_compare" id="compare_profit">
+                    <field name="OP">GT</field>
+                    <value name="A">
+                      <block type="read_details" id="current_profit_for_compare">
+                        <field name="DETAIL_INDEX">4</field>
+                      </block>
+                    </value>
+                    <value name="B">
+                      <block type="variables_get" id="get_max_profit_for_compare">
+                        <field name="VAR">MaxProfit</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+                <statement name="DO0">
+                  <block type="variables_set" id="set_max_profit_update">
+                    <field name="VAR">MaxProfit</field>
+                    <value name="VALUE">
+                      <block type="read_details" id="new_max_profit_value">
+                        <field name="DETAIL_INDEX">4</field>
+                      </block>
+                    </value>
+                  </block>
+                </statement>
+                <next>
+                  <block type="controls_if" id="exit_condition">
+                    <value name="IF0">
+                      <block type="logic_compare" id="check_retracement">
+                        <field name="OP">LT</field>
+                        <value name="A">
+                          <block type="read_details" id="current_profit_check_value">
+                            <field name="DETAIL_INDEX">4</field>
+                          </block>
+                        </value>
+                        <value name="B">
+                          <block type="math_arithmetic" id="calc_50_percent_value">
+                            <field name="OP">MULTIPLY</field>
+                            <value name="A">
+                              <block type="variables_get" id="get_max_profit_for_50_percent">
+                                <field name="VAR">MaxProfit</field>
+                              </block>
+                            </value>
+                            <value name="B">
+                              <block type="math_number" id="50_percent_num">
+                                <field name="NUM">0.5</field>
+                              </block>
+                            </value>
+                          </block>
+                        </value>
+                      </block>
+                    </value>
+                    <statement name="DO0">
+                      <block type="sell_at_market" id="sell_trade"></block>
+                    </statement>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+    <statement name="TRADE_AGAIN">
+      <block type="trade_again" id="trade_again"></block>
+    </statement>
+  </block>
+</xml>
